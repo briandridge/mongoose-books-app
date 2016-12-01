@@ -19,6 +19,9 @@ app.use(express.static('public'));
 // body parser config to accept our datatypes
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// requires models/modules
+var db = require('./models');
+
 
 
 ////////////////////
@@ -67,23 +70,35 @@ app.get('/', function (req, res) {
   res.sendFile('views/index.html' , { root : __dirname});
 });
 
-// get all books
+// ok! // get all books
 app.get('/api/books', function (req, res) {
   // send all books as JSON response
-  console.log('books index');
-  res.json(books);
+  db.Book.find(function(err, books){
+    if (err) { return console.log("index error: " + err); }
+    res.json(books);
+  });
 });
 
-// get one book
+// get one book // og to change
+// app.get('/api/books/:id', function (req, res) {
+//   // find one book by its id
+//   console.log('books show', req.params);
+//   for(var i=0; i < books.length; i++) {
+//     if (books[i]._id === req.params.id) {
+//       res.json(books[i]);
+//       break; // we found the right book, we can stop searching
+//     }
+//   }
+// });
+
+// ok? // get one book by id
 app.get('/api/books/:id', function (req, res) {
   // find one book by its id
-  console.log('books show', req.params);
-  for(var i=0; i < books.length; i++) {
-    if (books[i]._id === req.params.id) {
-      res.json(books[i]);
-      break; // we found the right book, we can stop searching
-    }
-  }
+  db.Book.findOne(function(err, books){
+      if (err) { return console.log("index error: " + err); }
+      res.json(books);
+    });
+  console.log(books);
 });
 
 // create new book
